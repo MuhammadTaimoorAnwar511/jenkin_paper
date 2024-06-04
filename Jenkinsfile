@@ -11,14 +11,14 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Install dependencies using npm
-                sh 'npm install'
+                bat 'npm install'
             }
         }
         stage('Build Docker Image') {
             steps {
                 // Build Docker image
                 script {
-                    def app = docker.build("taimooranwar/simple-reactjs-app")
+                    docker.build("taimooranwar/simple-reactjs-app")
                 }
             }
         }
@@ -26,8 +26,9 @@ pipeline {
             steps {
                 // Run Docker container
                 script {
-                    def app = docker.build("taimooranwar/simple-reactjs-app")
-                    app.run('-d -p 3000:3000')
+                    docker.image("taimooranwar/simple-reactjs-app").inside('-d -p 3000:3000') {
+                        echo 'Docker container is running'
+                    }
                 }
             }
         }
@@ -36,8 +37,7 @@ pipeline {
                 // Push Docker image to Docker Hub
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        def app = docker.build("taimooranwar/simple-reactjs-app")
-                        app.push("${env.BUILD_NUMBER}")
+                        docker.image("taimooranwar/simple-reactjs-app").push("${env.BUILD_NUMBER}")
                     }
                 }
             }
