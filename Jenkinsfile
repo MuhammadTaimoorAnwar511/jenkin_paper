@@ -21,7 +21,12 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build('taimooranwar/simple-reactjs-app:latest', '.')
+                    def dockerfilePath = "${workspace}/Dockerfile"
+                    if (fileExists(dockerfilePath)) {
+                        docker.build('taimooranwar/simple-reactjs-app:latest', "-f ${dockerfilePath} .")
+                    } else {
+                        error('Dockerfile not found!')
+                    }
                 }
             }
         }
