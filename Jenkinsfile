@@ -21,7 +21,10 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build('taimooranwar/simple-reactjs-app:latest')
+                    // Change to the directory containing the Dockerfile
+                    dir('C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\Simple ReactJS App Pipeline') {
+                        docker.build('taimooranwar/simple-reactjs-app:latest')
+                    }
                 }
             }
         }
@@ -37,7 +40,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', dockerhub-credentials) {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
                         docker.image('taimooranwar/simple-reactjs-app:latest').push()
                     }
                 }
