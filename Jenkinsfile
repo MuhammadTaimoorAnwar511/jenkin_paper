@@ -21,14 +21,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def dockerfilePath = findDockerfile()
-                    if (dockerfilePath) {
-                        dir(dockerfilePath.parent) {
-                            docker.build('taimooranwar/simple-reactjs-app:latest')
-                        }
-                    } else {
-                        error('Dockerfile not found!')
-                    }
+                    docker.build('taimooranwar/simple-reactjs-app:latest', '.')
                 }
             }
         }
@@ -50,14 +43,5 @@ pipeline {
                 }
             }
         }
-    }
-}
-
-def findDockerfile() {
-    def dockerfile = findFiles(glob: '**/Dockerfile')
-    if (dockerfile) {
-        return dockerfile[0]
-    } else {
-        return null
     }
 }
