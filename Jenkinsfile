@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     // Change to the directory containing the Dockerfile
-                    dir('C:\\ProgramData\\Jenkins\\workspace\\Simple ReactJS App Pipeline') {
+                    dir('C:\ProgramData\Jenkins\workspace\Simple ReactJS App Pipeline') {
                         docker.build('taimooranwar/simple-reactjs-app:latest')
                     }
                 }
