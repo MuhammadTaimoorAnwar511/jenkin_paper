@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -18,7 +22,7 @@ pipeline {
             steps {
                 // Build Docker image
                 script {
-                    docker.build("taimooranwar/simple-reactjs-app")
+                    docker.build("taimooranwar/simple-reactjs-app:${env.BUILD_NUMBER}")
                 }
             }
         }
@@ -26,7 +30,7 @@ pipeline {
             steps {
                 // Run Docker container
                 script {
-                    docker.image("taimooranwar/simple-reactjs-app").inside('-d -p 3000:3000') {
+                    docker.image("taimooranwar/simple-reactjs-app:${env.BUILD_NUMBER}").inside('-d -p 3000:3000') {
                         echo 'Docker container is running'
                     }
                 }
@@ -37,7 +41,7 @@ pipeline {
                 // Push Docker image to Docker Hub
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        docker.image("taimooranwar/simple-reactjs-app").push("${env.BUILD_NUMBER}")
+                        docker.image("taimooranwar/simple-reactjs-app:${env.BUILD_NUMBER}").push()
                     }
                 }
             }
