@@ -2,46 +2,43 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from GitHub repository
-                git url: 'https://github.com/MuhammadTaimoorAnwar511/jenkin_paper.git', branch: 'main'
+                git 'https://github.com/aditya-sridhar/simple-reactjs-app.git'
             }
         }
-        stage('Install Dependencies') {
+
+        stage('Dependency Installation') {
             steps {
-                // Install dependencies using npm
-                bat 'npm install'
+                sh 'npm install'
             }
         }
+
         stage('Build Docker Image') {
             steps {
-                // Build Docker image
                 script {
-                    docker.build("taimooranwar/simple-reactjs-app:${env.BUILD_NUMBER}")
+                    docker.build('taimooranwar/simple-reactjs-app:latest')
                 }
             }
         }
+
         stage('Run Docker Image') {
             steps {
-                // Run Docker container
                 script {
-                    docker.image("taimooranwar/simple-reactjs-app:${env.BUILD_NUMBER}").inside('-d -p 3000:3000') {
-                        echo 'Docker container is running'
-                    }
+                    docker.image('taimooranwar/simple-reactjs-app:latest').run()
                 }
             }
         }
+
         stage('Push Docker Image') {
             steps {
-                // Push Docker image to Docker Hub
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        docker.image("taimooranwar/simple-reactjs-app:${env.BUILD_NUMBER}").push()
+                    docker.withRegistry('https://index.docker.io/v1/', dockerhub-credentials) {
+                        docker.image('taimooranwar/simple-reactjs-app:latest').push()
                     }
                 }
             }
