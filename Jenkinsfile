@@ -14,7 +14,7 @@ pipeline {
 
         stage('Dependency Installation') {
             steps {
-                sh 'npm install'
+                bat 'npm install' // Use bat for running Windows batch commands
             }
         }
 
